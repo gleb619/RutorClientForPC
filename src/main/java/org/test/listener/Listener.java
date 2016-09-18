@@ -7,9 +7,9 @@ import java.util.function.Predicate;
  */
 public interface Listener<T> {
 
-    void onCall(T message);
+    Listener<T> onCall(T message);
 
-    default Predicate<String> supported() {
+    default Predicate<T> supported() {
         return s -> Boolean.TRUE;
     }
 

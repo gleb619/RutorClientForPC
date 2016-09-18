@@ -11,6 +11,7 @@ import org.test.service.config.Configurator;
 import org.test.service.config.DefaultConfigurator;
 import org.test.service.db.DatabaseConfigurer;
 import org.test.service.db.EntityConfigurer;
+import org.test.service.db.resource.SettingResource;
 import org.test.service.socket.WebSocketConfigurer;
 import org.test.service.subscription.DefaultSubscriber;
 
@@ -19,13 +20,8 @@ import org.test.service.subscription.DefaultSubscriber;
  */
 public class AppModule extends AbstractModule {
 
-    private final GUIThread uiThread;
-
-    public AppModule(GUIThread uiThread) {
-        this.uiThread = uiThread;
-    }
-
     /* ======= PROJECT ======= */
+    @Override
     public Settings provideProjectSettings() {
         return singleton(() -> new Settings());
     }
@@ -37,7 +33,8 @@ public class AppModule extends AbstractModule {
                 provideDatabaseConfigurer(),
                 provideWebSocketConfigurer(),
                 provideUTorrentConfigurer(),
-                provideDefaultSubscriber()
+                provideDefaultSubscriber(),
+                provideSettingResource()
         ));
     }
 
@@ -58,15 +55,15 @@ public class AppModule extends AbstractModule {
     @Override
     public DefaultSubscriber provideDefaultSubscriber() {
         return singleton(() -> new DefaultSubscriber(provideWebSocketConfigurer(), provideProjectSettings(),
-                provideClientAppenderListner(),
-                provideLogsListner()
+                provideLogsListner(),
+                provideClientAppenderListner()
         ));
     }
 
     /* ======= APPENDERS ======= */
     public ClientAppenderListener provideClientAppenderListner() {
         return singleton(() -> new ClientAppenderListener(
-                provideUTorrentAppender()
+                provideProjectSettings(), provideUTorrentAppender()
         ));
     }
 
@@ -75,7 +72,7 @@ public class AppModule extends AbstractModule {
     }
 
     public uTorrentAppender provideUTorrentAppender() {
-        return singleton(() -> new uTorrentAppender(provideProjectSettings(), provideUTorrentConfigurer()));
+        return singleton(() -> new uTorrentAppender(provideUTorrentConfigurer()));
     }
 
     /* ======= DB ======= */
@@ -87,10 +84,15 @@ public class AppModule extends AbstractModule {
         return singleton(() -> new DatabaseConfigurer(provideProjectSettings(), provideEntityConfigurer()));
     }
 
+    @Override
+    public SettingResource provideSettingResource() {
+        return singleton(() -> new SettingResource(provideProjectSettings(), provideDatabaseConfigurer()));
+    }
+
     /* ======= UI ======= */
     @Override
     public GUIThread provideUITread() {
-        return uiThread;
+        return singleton(() -> new GUIThread(provideProjectSettings()));
     }
 
 }

@@ -9,8 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 public class LogsListener implements Listener<String> {
 
     @Override
-    public void onCall(String message) {
+    public Listener<String> onCall(String message) {
         log.info(String.format("Receive message from server, message is %s", message));
+        return this;
     }
 
 }

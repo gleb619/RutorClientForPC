@@ -3,6 +3,7 @@ package org.test.service.subscription;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.test.listener.Listener;
+import org.test.listener.SettingsChangesListener;
 import org.test.model.Settings;
 import org.test.service.socket.AbstractStompFrameHandler;
 import org.test.service.socket.WebSocketConfigurer;
@@ -30,17 +31,51 @@ public class DefaultSubscriber implements Subscriber {
 
     @Override
     public void configure() throws ExecutionException, InterruptedException {
-        webSocketConfigurer.getData().subscribe(settings.value(Settings.Codes.ROUTE_COMMAND), new AbstractStompFrameHandler() {
+        if (Settings.Values.UNDEFINED.same(settings.value(Settings.Codes.PROJECT_CLIENT_UID))) {
+            settings.registerOneTimeChangesListner(
+                    new SettingsChangesListener(Settings.Codes.PROJECT_CLIENT_UID, value -> registerCommandsSubscriber()));
+            log.info("Can't find record about client uid");
+        } else {
+            registerCommandsSubscriber();
+        }
+
+        registerNewsSubscriber();
+    }
+
+    private Listener registerNewsSubscriber() {
+        webSocketConfigurer.getData().subscribe(settings.value(Settings.Codes.ROUTE_NEWS), new AbstractStompFrameHandler() {
 
             @Override
             public void handleFrame(StompHeaders stompHeaders, String body) {
-                listeners.parallelStream()
+                listeners.stream()
+                        .filter(listener -> listener.supported().test(settings.value(Settings.Codes.ROUTE_NEWS)))
+                        .forEach(stringListener -> stringListener.onCall(body));
+            }
+
+        });
+        log.info(String.format("Successfully subscribed to %s", settings.value(Settings.Codes.ROUTE_NEWS)));
+
+        return null;
+    }
+
+    private Listener registerCommandsSubscriber() {
+        String path = String.format("%s%s",
+                settings.value(Settings.Codes.ROUTE_COMMAND),
+                settings.value(Settings.Codes.PROJECT_CLIENT_UID));
+
+        webSocketConfigurer.getData().subscribe(path, new AbstractStompFrameHandler() {
+
+            @Override
+            public void handleFrame(StompHeaders stompHeaders, String body) {
+                listeners.stream()
                         .filter(listener -> listener.supported().test(settings.value(Settings.Codes.ROUTE_COMMAND)))
                         .forEach(stringListener -> stringListener.onCall(body));
             }
 
         });
-        log.info(String.format("Successfully subscribed to %s", settings.value(Settings.Codes.ROUTE_COMMAND)));
+        log.info(String.format("Successfully subscribed to %s", path));
+
+        return null;
     }
 
     @Override

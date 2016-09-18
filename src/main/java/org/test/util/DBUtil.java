@@ -20,12 +20,12 @@ public class DBUtil {
         return exists;
     }
 
-    public <T> T executeInTransaction(Database database, Callback<T> callback) {
+    public static <T> T executeInTransaction(Database database, Callback<T> callback) {
         Transaction trans = database.startTransaction();
         T output = null;
 
         try {
-            output = callback.onCall();
+            output = callback.onCall(trans);
             trans.commit();
             return output;
         } catch (Throwable e) {
@@ -37,7 +37,7 @@ public class DBUtil {
     }
 
     public interface Callback<T> {
-        T onCall();
+        T onCall(Transaction transaction);
     }
 
 }

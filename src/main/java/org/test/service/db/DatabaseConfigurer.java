@@ -23,7 +23,7 @@ public class DatabaseConfigurer implements ConfigWithHandler<Database> {
     public DatabaseConfigurer(Settings settings, EntityConfigurer entityConfigurer) {
         this.settings = settings;
         this.entityConfigurer = entityConfigurer;
-        this.db = new CustomDatabase(settings);
+        this.db = new CustomDatabase();
     }
 
     @Override

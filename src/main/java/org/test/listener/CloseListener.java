@@ -18,9 +18,11 @@ public class CloseListener implements Listener<Void> {
     }
 
     @Override
-    public void onCall(Void message) {
+    public Listener<Void> onCall(Void message) {
         if (Objects.nonNull(webSocketConfigurer) && Objects.nonNull(webSocketConfigurer.getData())) {
             webSocketConfigurer.getData().disconnect();
         }
+
+        return this;
     }
 }

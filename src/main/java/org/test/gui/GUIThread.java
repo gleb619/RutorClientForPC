@@ -1,7 +1,10 @@
 package org.test.gui;
 
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.test.Main;
+import org.test.model.Settings;
 import org.test.service.config.UIConfig;
 
 import java.util.ArrayList;
@@ -13,14 +16,24 @@ import java.util.List;
 public class GUIThread extends Thread {
 
     private final List<UIConfig> windows = new ArrayList<>();
+    private final Settings settings;
     private Display display;
     private Shell shell;
+
+    public GUIThread(Settings settings) {
+        this.settings = settings;
+        setDaemon(true);
+        setName(getName() + "::GuiThread");
+    }
 
     @Override
     public void run() {
         display = new Display();
         shell = new Shell(getDisplay());
         shell.setText("Rutor client");
+
+        ClassLoader classLoader = getClass().getClassLoader();
+        shell.setImage(new Image(display, classLoader.getResourceAsStream(settings.value(Settings.Codes.PROJECT_LAUNCHER_ICON_FILE))));
 
         windows.forEach(uiConfig -> uiConfig.configure(this));
 
@@ -33,6 +46,7 @@ public class GUIThread extends Thread {
             if (!display.readAndDispatch()) display.sleep();
         }
         display.dispose();
+        Main.working = false;
 
 //        Shell shell = new Shell(display);
 //        shell.setLayout(new GridLayout());
