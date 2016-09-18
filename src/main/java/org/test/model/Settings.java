@@ -31,7 +31,7 @@ public class Settings {
         this.data.put(Settings.Codes.CLIENT_IP.name(), "localhost");
         this.data.put(Settings.Codes.CLIENT_PORT.name(), 8090);
 
-        this.data.put(Settings.Codes.ROUTE_COMMAND.name(), "/topic/pc/client/");
+        this.data.put(Settings.Codes.ROUTE_COMMAND.name(), "/topic/");
         this.data.put(Settings.Codes.ROUTE_NEWS.name(), "/topic/greetings");
 
         this.data.put(Codes.PROJECT_WORK_DIR.name(), System.getProperty("user.dir"));

@@ -4,8 +4,6 @@ import com.utorrent.webapiwrapper.core.entities.RequestResult;
 import lombok.extern.slf4j.Slf4j;
 import org.test.service.appender.Appender;
 
-import java.io.IOException;
-
 /**
  * Created by BORIS on 16.09.2016.
  */
@@ -23,7 +21,7 @@ public class uTorrentAppender implements Appender {
         try {
             RequestResult requestResult = uTorrentConfigurer.getData().addTorrent(url);
             log.info(String.format("Tried to add topic, result is %s", requestResult));
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
