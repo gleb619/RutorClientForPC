@@ -1,8 +1,8 @@
 package org.test.gui;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.test.Main;
 import org.test.model.Settings;
 import org.test.service.config.UIConfig;
@@ -33,7 +33,10 @@ public class GUIThread extends Thread {
         shell.setText("Rutor client");
 
         ClassLoader classLoader = getClass().getClassLoader();
-        shell.setImage(new Image(display, classLoader.getResourceAsStream(settings.value(Settings.Codes.PROJECT_LAUNCHER_ICON_FILE))));
+        Image image = new Image(display, classLoader.getResourceAsStream(settings.value(Settings.Codes.PROJECT_LAUNCHER_ICON_FILE)));
+        Image image2 = new Image(display, classLoader.getResourceAsStream(settings.value(Settings.Codes.PROJECT_LAUNCHER_ICON_FILE_MD)));
+        shell.setImage(image2);
+        createTrayMenu(image);
 
         windows.forEach(uiConfig -> uiConfig.configure(this));
 
@@ -47,37 +50,36 @@ public class GUIThread extends Thread {
         }
         display.dispose();
         Main.working = false;
+    }
 
-//        Shell shell = new Shell(display);
-//        shell.setLayout(new GridLayout());
-//        shell.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-//        label = new Label(shell, SWT.NONE);
-//        label.setText(" -- ");
-//        shell.open();
-//        shell.pack();
-//
-//        while (!shell.isDisposed()) {
-//            if (!display.readAndDispatch()) display.sleep();
-//        }
-//        display.dispose();
+    public void createTrayMenu(Image image) {
+        final Tray tray = display.getSystemTray();
+        if (tray == null) {
+            System.out.println("The system tray is not available");
+        } else {
+            final TrayItem item = new TrayItem(tray, SWT.NONE);
+            item.setToolTipText("SWT TrayItem");
+            item.addListener(SWT.Show, event -> System.out.println("show"));
+            item.addListener(SWT.Hide, event -> System.out.println("hide"));
+            item.addListener(SWT.Selection, event -> System.out.println("selection"));
+            item.addListener(SWT.DefaultSelection, event -> System.out.println("default selection"));
+            final Menu menu = new Menu(shell, SWT.POP_UP);
+            for (int i = 0; i < 8; i++) {
+                MenuItem mi = new MenuItem(menu, SWT.PUSH);
+                mi.setText("Item" + i);
+                mi.addListener(SWT.Selection, event -> System.out.println("selection " + event.widget));
+                if (i == 0) menu.setDefaultItem(mi);
+            }
+            item.addListener(SWT.MenuDetect, event -> menu.setVisible(true));
+            item.setImage(image);
+//            item.setHighlightImage (image);
+        }
     }
 
     public GUIThread addWindow(UIConfig widget) {
         windows.add(widget);
         return this;
     }
-
-//    public synchronized void update(final int value) {
-//        if (display == null || display.isDisposed())
-//            return;
-//        display.asyncExec(new Runnable() {
-//
-//            public void run() {
-//                label.setText("" + value);
-//            }
-//        });
-//
-//    }
 
     public Display getDisplay() {
         return display;

@@ -69,12 +69,24 @@ public class SimpleForm implements UIConfig, Listener<String> {
 
         this.address.setLayoutData(gridData2);
         this.logs.setLayoutData(gridData);
+        printInstruction();
     }
 
     private void configureData() {
         if (Settings.Values.UNDEFINED.notSame(settings.value(Settings.Codes.PROJECT_CLIENT_UID))) {
             this.address.setText(settings.value(Settings.Codes.PROJECT_CLIENT_UID));
         }
+    }
+
+    private void printInstruction() {
+        this.logs.append("Open this link to open the detailed instructions\n\n");
+        this.logs.append("http://www.htpcguides.com/setup-utorrent-remote-access-webui/\n\n");
+        this.logs.append("1) Open uTorrent\n");
+        this.logs.append("2) Click Option -> Preference\n");
+        this.logs.append("3) Click WebUI -> Enable Web interface\n");
+        this.logs.append("4) Configure Username and Password, for test period please use: admin for username and admin for password\n");
+        this.logs.append("5) Configure custom port, for test period please use 8090\n");
+        this.logs.append("6) Press 'OK'\n");
     }
 
     @Override

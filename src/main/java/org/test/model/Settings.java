@@ -36,6 +36,7 @@ public class Settings {
 
         this.data.put(Codes.PROJECT_WORK_DIR.name(), System.getProperty("user.dir"));
         this.data.put(Codes.PROJECT_LAUNCHER_ICON_FILE.name(), "launcher-icon.ico");
+        this.data.put(Codes.PROJECT_LAUNCHER_ICON_FILE_MD.name(), "launcher-icon-md.png");
 
         loadProperties();
     }
@@ -81,6 +82,7 @@ public class Settings {
 
         PROJECT_WORK_DIR,
         PROJECT_LAUNCHER_ICON_FILE,
+        PROJECT_LAUNCHER_ICON_FILE_MD,
         PROJECT_CLIENT_UID,
         CLIENT_LOGIN,
         CLIENT_PASS,

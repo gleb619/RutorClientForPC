@@ -12,6 +12,8 @@ import org.test.service.config.DefaultConfigurator;
 import org.test.service.db.DatabaseConfigurer;
 import org.test.service.db.EntityConfigurer;
 import org.test.service.db.resource.SettingResource;
+import org.test.service.http.DefaultJsonConverter;
+import org.test.service.http.JsonConverter;
 import org.test.service.socket.WebSocketConfigurer;
 import org.test.service.subscription.DefaultSubscriber;
 
@@ -47,6 +49,11 @@ public class AppModule extends AbstractModule {
         return singleton(() -> new CloseListener(provideWebSocketConfigurer()));
     }
 
+    /* ======= HTTP ======= */
+    public JsonConverter provideJsonConverter() {
+        return singleton(() -> new DefaultJsonConverter());
+    }
+
     /* ======= SOCKET ======= */
     public WebSocketConfigurer provideWebSocketConfigurer() {
         return singleton(() -> new WebSocketConfigurer(provideProjectSettings()));
@@ -63,7 +70,9 @@ public class AppModule extends AbstractModule {
     /* ======= APPENDERS ======= */
     public ClientAppenderListener provideClientAppenderListner() {
         return singleton(() -> new ClientAppenderListener(
-                provideProjectSettings(), provideUTorrentAppender()
+                provideJsonConverter(),
+                provideProjectSettings(),
+                provideUTorrentAppender()
         ));
     }
 

@@ -1,7 +1,9 @@
 package org.test.listener;
 
+import org.test.model.DownloadTopicCommand;
 import org.test.model.Settings;
 import org.test.service.appender.Appender;
+import org.test.service.http.JsonConverter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,18 +15,29 @@ import java.util.function.Predicate;
  */
 public class ClientAppenderListener implements Listener<String> {
 
-    private final List<Appender> appenders;
+    private final List<Appender<DownloadTopicCommand>> appenders;
     private final Settings settings;
+    private final JsonConverter jsonConverter;
 
-    public ClientAppenderListener(Settings settings, Appender... appenders) {
+    public ClientAppenderListener(JsonConverter jsonConverter, Settings settings, Appender<DownloadTopicCommand>... appenders) {
+        this.jsonConverter = jsonConverter;
         this.settings = settings;
         this.appenders = new ArrayList<>(Arrays.asList(appenders));
     }
 
     @Override
     public Listener<String> onCall(String message) {
-        appenders.forEach(appender -> appender.onCommandReceived(message));
+        try {
+            evaluateCommand(jsonConverter.read(message, DownloadTopicCommand.class));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return this;
+    }
+
+    private void evaluateCommand(DownloadTopicCommand finalCommand) {
+        appenders.forEach(appender -> appender.onCommandReceived(finalCommand));
     }
 
     @Override
