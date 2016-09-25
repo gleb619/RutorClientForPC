@@ -69,7 +69,7 @@ public class WebSocketConfigurer implements Config {
         return stompSession;
     }
 
-    public class AbstractHandler extends StompSessionHandlerAdapter {
+    public static class AbstractHandler extends StompSessionHandlerAdapter {
         public void afterConnected(StompSession stompSession, StompHeaders stompHeaders) {
             log.info(String.format("Successfully connected to remote server, sessionId: %s, stompHeaders: %s;", stompSession.getSessionId(), stompHeaders));
         }

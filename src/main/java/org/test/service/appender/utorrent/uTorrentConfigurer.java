@@ -10,12 +10,12 @@ import org.test.service.config.ConfigWithHandler;
  * Created by BORIS on 16.09.2016.
  */
 @Slf4j
-public class uTorrentConfigurer implements ConfigWithHandler<UTorrentWebAPIClient> {
+public class UTorrentConfigurer implements ConfigWithHandler<UTorrentWebAPIClient> {
 
     private final Settings setting;
     private UTorrentWebAPIClient client;
 
-    public uTorrentConfigurer(Settings setting) {
+    public UTorrentConfigurer(Settings setting) {
         this.setting = setting;
     }
 

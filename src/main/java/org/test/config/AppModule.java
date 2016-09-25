@@ -5,8 +5,8 @@ import org.test.listener.ClientAppenderListener;
 import org.test.listener.CloseListener;
 import org.test.listener.LogsListener;
 import org.test.model.Settings;
-import org.test.service.appender.utorrent.uTorrentAppender;
-import org.test.service.appender.utorrent.uTorrentConfigurer;
+import org.test.service.appender.utorrent.UTorrentAppender;
+import org.test.service.appender.utorrent.UTorrentConfigurer;
 import org.test.service.config.Configurator;
 import org.test.service.config.DefaultConfigurator;
 import org.test.service.db.DatabaseConfigurer;
@@ -76,12 +76,12 @@ public class AppModule extends AbstractModule {
         ));
     }
 
-    public uTorrentConfigurer provideUTorrentConfigurer() {
-        return singleton(() -> new uTorrentConfigurer(provideProjectSettings()));
+    public UTorrentConfigurer provideUTorrentConfigurer() {
+        return singleton(() -> new UTorrentConfigurer(provideProjectSettings()));
     }
 
-    public uTorrentAppender provideUTorrentAppender() {
-        return singleton(() -> new uTorrentAppender(provideUTorrentConfigurer()));
+    public UTorrentAppender provideUTorrentAppender() {
+        return singleton(() -> new UTorrentAppender(provideUTorrentConfigurer()));
     }
 
     /* ======= DB ======= */

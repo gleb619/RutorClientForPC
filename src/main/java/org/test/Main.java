@@ -11,9 +11,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class Main implements Runnable {
 
-    private static final Main instance = new Main();
-    public static Boolean working = Boolean.TRUE;
+    public static final Main instance = new Main();
     private final AbstractModule objectGraph = new AppModule();
+    private Boolean working = Boolean.TRUE;
 
     public static void main(String[] args) {
         try {
@@ -48,4 +48,11 @@ public class Main implements Runnable {
         }
     }
 
+    public Boolean getWorking() {
+        return working;
+    }
+
+    public void setWorking(Boolean working) {
+        this.working = working;
+    }
 }

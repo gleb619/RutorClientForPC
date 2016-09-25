@@ -49,7 +49,7 @@ public class GUIThread extends Thread {
             if (!display.readAndDispatch()) display.sleep();
         }
         display.dispose();
-        Main.working = false;
+        Main.instance.setWorking(false);
     }
 
     public void createTrayMenu(Image image) {

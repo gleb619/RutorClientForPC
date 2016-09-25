@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
+import java.io.UncheckedIOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 
 /**
@@ -19,7 +21,11 @@ public abstract class AbstractStompFrameHandler implements StompFrameHandler {
 
     @Override
     public void handleFrame(StompHeaders stompHeaders, Object body) {
-        handleFrame(stompHeaders, new String((byte[]) body));
+        try {
+            handleFrame(stompHeaders, new String((byte[]) body, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     public abstract void handleFrame(StompHeaders stompHeaders, String body);

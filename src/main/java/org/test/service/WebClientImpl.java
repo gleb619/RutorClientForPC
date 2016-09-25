@@ -14,6 +14,8 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import org.springframework.web.socket.sockjs.frame.Jackson2SockJsMessageCodec;
 import org.test.model.Settings;
 
+import java.io.UncheckedIOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
@@ -45,15 +47,19 @@ public class WebClientImpl {
             }
 
             public void handleFrame(StompHeaders stompHeaders, Object body) {
-                logger.info("Received greeting " + new String((byte[]) body));
+                try {
+                    logger.info("Received greeting " + new String((byte[]) body, "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    throw new UncheckedIOException(e);
+                }
 //                if(Objects.nonNull(lisntener)) lisntener.onCall(new String((byte[]) body));
             }
         });
     }
 
-    public void sendHello(StompSession stompSession) {
+    public void sendHello(StompSession stompSession) throws UnsupportedEncodingException {
         String jsonHello = "{ \"name\" : \"Nick\" }";
-        stompSession.send("/app/hello", jsonHello.getBytes());
+        stompSession.send("/app/hello", jsonHello.getBytes("UTF-8"));
     }
 
     public void configure() throws Exception {
@@ -74,7 +80,7 @@ public class WebClientImpl {
         return stompSession;
     }
 
-    private class MyHandler extends StompSessionHandlerAdapter {
+    private static class MyHandler extends StompSessionHandlerAdapter {
         public void afterConnected(StompSession stompSession, StompHeaders stompHeaders) {
             logger.info("Now connected");
         }

@@ -27,6 +27,9 @@ public class DatabaseConfigurer implements ConfigWithHandler<Database> {
     }
 
     @Override
+    //TODO: ovverride security policy, create pair which based on system sn. Refer to this:
+    // http://stackoverflow.com/questions/1986732/how-to-get-a-unique-computer-identifier-in-java-like-disk-id-or-motherboard-id
+    // https://github.com/sarxos/secure-tokens/blob/master/src/main/java/com/github/sarxos/securetoken/impl/Hardware4Nix.java
     public void configure() throws Exception {
         System.setProperty("norm.serverName", "localhost");
         System.setProperty("norm.databaseName", String.format("%s\\%s",

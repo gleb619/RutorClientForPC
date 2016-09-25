@@ -13,14 +13,14 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DerbyMaker extends StandardSqlMaker {
 
-    protected static ConcurrentHashMap<Class, StandardPojoInfo> map = new ConcurrentHashMap<Class, StandardPojoInfo>();
+    protected static final ConcurrentHashMap<Class, StandardPojoInfo> map = new ConcurrentHashMap<Class, StandardPojoInfo>();
 
     @Override
     public StandardPojoInfo getPojoInfo(Class rowClass) {
         StandardPojoInfo pi = map.get(rowClass);
         if (pi == null) {
             pi = new DerbyStandardPojoInfo(rowClass);
-            map.put(rowClass, pi);
+            map.putIfAbsent(rowClass, pi);
 
             makeInsertSql(pi);
             makeUpsertSql(pi);
